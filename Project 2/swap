@@ -1,0 +1,18 @@
+with subq1 as
+(
+select distinct p.login, p.name, p.gender
+from Avatar a, Player p
+where a.login = p.login and a.gender <> p.gender
+),
+
+subq2 as (
+select login, count(login) as #avatar
+from Avatar
+group by login
+)
+
+select subq1.login, subq1.name, subq1.gender, subq2.#avatar 
+from subq1, subq2
+where subq1.login = subq2.login
+order by subq1.login; 
+

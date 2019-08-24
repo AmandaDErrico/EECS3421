@@ -1,0 +1,5 @@
+select * 
+from Player
+where LOWER(name) LIKE '%' || LOWER(login) || '%'
+order by login asc;
+

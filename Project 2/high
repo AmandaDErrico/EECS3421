@@ -1,0 +1,33 @@
+with subq1 as 
+(
+select distinct l.theme, a.race, SUM(t.sql) as total
+from Avatar a, Treasure t, Loot l, Quest q, Visit v
+where l.login = v.login
+and a.login = l.login
+and a.login = v.login
+
+and a.name = v.name
+
+and l.day = v.day
+and q.day = v.day
+
+and t.treasure = l.treasure
+and l.theme = q.theme
+and q.succeeded is not NULL
+
+group by l.theme, a.race
+order by l.theme, total
+),
+
+subq2 as
+(
+select subq1.theme, MAX(subq1.total) as total
+from subq1 
+group by subq1.theme
+)
+	
+
+select subq1.theme, subq1.race, subq1.total
+from subq1, subq2
+where subq1.theme = subq2.theme and subq1.total = subq2.total
+order by subq1.theme, subq1.race;

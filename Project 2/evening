@@ -1,0 +1,5 @@
+select theme, day, realm, succeeded 
+from Quest 
+where not succeeded < '20:00:00' or succeeded is NULL 
+order by theme, day, realm;
+

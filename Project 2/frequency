@@ -1,0 +1,15 @@
+select login, realm, count(realm) as #visit,
+    cast(
+	    round(
+            (decimal
+                (max(DAYS(day)) - min(DAYS(day)))
+			)
+            /
+            (decimal
+                (count(distinct(date(day)))-1)
+			),2) as decimal(5,2)		
+	) as frequency
+from Visit 
+group by login, realm
+having count(distinct(date(day)))>1
+order by login, realm;

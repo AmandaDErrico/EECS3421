@@ -1,0 +1,16 @@
+with subq as 
+(
+select login, count(CASE when gender = 'M' then 1 end) as #males, count(CASE when gender = 'F' then 1 end) as #females 
+from Avatar
+group by login
+)
+
+select distinct p.login, replace(replace(p.gender, 'F', 'female'), 'M', 'male') as gender, 
+	(CASE when subq.#males > 0 and subq.#females = 0 then 'male'
+	      when subq.#females > 0 and subq.#males = 0 then 'female'
+	      when subq.#males > 0 and subq.#females > 0 then 'both'
+	 end) as avatars
+from subq, Player p
+where subq.login = p.login
+order by p.login; 
+

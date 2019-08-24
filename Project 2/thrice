@@ -1,0 +1,10 @@
+select login
+from Player
+union all
+select login
+from Player
+union all
+select login
+from Player
+order by login;
+

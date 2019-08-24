@@ -1,0 +1,63 @@
+with subq1 as 
+(
+select distinct v.login, v.name, a.day, a.realm, a.theme 
+from Actor a, Visit v
+where a.login = v.login and a.realm = v.realm and a.day = v.day
+),
+	
+subq2 as 
+(
+select distinct s1.login as companion1, s1.name as fname, s1.realm as realm, s2.login as companion2, s2.name as lname
+from subq1 s1, subq1 s2
+where s1.login < s2.login and s1.name <> s2.name and s1.realm = s2.realm and s1.theme = s2.theme and s1.day = s2.day
+)
+
+
+select * 
+from subq2
+
+where NOT EXISTS (
+	
+(
+select subq1.day, subq1.realm, subq1.theme
+from subq1
+where subq1.login = subq2.companion1
+and subq1.name = subq2.fname
+and subq1.realm = subq2.realm
+)
+
+EXCEPT
+
+(
+select subq1.day, subq1.realm, subq1.theme
+from subq1
+where subq1.login = subq2.companion2
+and subq1.name = subq2.lname
+and subq1.realm = subq2.realm 
+)
+
+)
+
+and NOT EXISTS (
+
+(
+select subq1.day, subq1.realm, subq1.theme
+from subq1
+where subq1.login = subq2.companion2
+and subq1.name = subq2.lname
+and subq1.realm = subq2.realm
+)
+
+EXCEPT
+
+(
+select subq1.day, subq1.realm, subq1.theme
+from subq1
+where subq1.login = subq2.companion1
+and subq1.name = subq2.fname
+and subq1.realm = subq2.realm
+)
+
+)
+
+order by realm, companion1, fname, companion2, lname;
